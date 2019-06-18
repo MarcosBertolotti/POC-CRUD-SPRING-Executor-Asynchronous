@@ -31,11 +31,24 @@ public class PlayerController {
 
     @PostMapping("/team/{id}")
     public void add(@RequestBody final Player player, @PathVariable("id") final Integer idTeam){
+
         playerService.add(player,idTeam);
     }
 
     @GetMapping("")
     public List<PlayerDTO> getAll(){
+
+        List<Player> players = playerService.getAll();
+
+        return players.stream()
+                .map(player -> convertEntityToDto(player))
+                .collect(Collectors.toList());
+    }
+
+    // HACER
+    @GetMapping("/team/{id}")
+    public List<PlayerDTO> getAll(@PathVariable("id") final Integer id){
+
         List<Player> players = playerService.getAll();
 
         return players.stream()
@@ -45,24 +58,31 @@ public class PlayerController {
 
     @GetMapping("/{id}")
     public PlayerDTO getById(@PathVariable("id") final Integer id){
-        return convertEntityToDto(playerService.getById(id));
+
+        Player player = playerService.getById(id);
+
+        return convertEntityToDto(player);
     }
 
-    @PutMapping("/team/{id}")
-    public void update(@RequestBody Player player, @PathVariable("id") final Integer idTeam){
-        playerService.update(player,idTeam);
+    @PutMapping("/{idPlayer}/team/{idTeam}")
+    public void update(@RequestBody Player player, @PathVariable("idPlayer") final Integer idPlayer, @PathVariable("idTeam") final Integer idTeam){
+
+        playerService.update(player,idPlayer,idTeam);
     }
 
     @DeleteMapping("/{id}")
     public void deleteById(@PathVariable("id") final Integer id){
+
         playerService.deleteById(id);
     }
 
     private PlayerDTO convertEntityToDto(Player player)  {
+
         return modelMapper.map(player, PlayerDTO.class);
     }
 
     private Player convertDtoToEntity(PlayerDTO playerDto){
+
         Player player = modelMapper.map(playerDto,Player.class);
 
         if(!isNull(playerDto.getId())){

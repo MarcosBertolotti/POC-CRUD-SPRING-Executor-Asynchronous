@@ -2,6 +2,7 @@ package com.example.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Max;
@@ -13,6 +14,7 @@ import javax.validation.constraints.Positive;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode
 public class PlayerDTO {
 
     private Integer id;
@@ -20,8 +22,8 @@ public class PlayerDTO {
     @NotEmpty(message = "name can not be null or empty")
     private String name;
 
-    @NotEmpty(message = "subname can not be null or empty")
-    private String surName;
+    @NotEmpty(message = "surname can not be null or empty")
+    private String surname;
 
     @NotNull(message = "dorsal can not be null")
     @Positive(message = "dorsal must be greater than or equal to 1")

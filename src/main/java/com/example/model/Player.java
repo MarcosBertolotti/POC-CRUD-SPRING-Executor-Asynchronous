@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
@@ -23,16 +25,16 @@ public class Player {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_player")
+    @Column(name = "player_id")
     private Integer id;
 
     @Column(name = "name")
     @NotEmpty(message = "name can not be null or empty")
     private String name;
 
-    @Column(name = "sur_name")
+    @Column(name = "surname")
     @NotEmpty(message = "surname can not be null or empty")
-    private String surName;
+    private String surname;
 
     @Column(name = "dorsal")
     @NotNull(message = "dorsal can not be null")
@@ -50,8 +52,8 @@ public class Player {
     @Positive(message = "salary must be positive")
     private Integer salary;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "team_id", referencedColumnName = "id_team")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "team_id", referencedColumnName = "team_id")
     @JsonIgnore
     private Team team;
 

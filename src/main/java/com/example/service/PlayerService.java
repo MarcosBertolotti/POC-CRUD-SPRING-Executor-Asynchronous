@@ -32,7 +32,6 @@ public class PlayerService {
         player.setTeam(team);
 
         playerRepository.save(player);
-        teamRepository.save(team);
     }
 
     public List<Player> getAll(){
@@ -46,18 +45,24 @@ public class PlayerService {
                 .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, String.format(PLAYER_NOT_FOUND,id)));
     }
 
-    public void update(Player player, final Integer idTeam){
+    public void update(Player player, final Integer idPlayer, final Integer idTeam){
 
-        Team team = teamRepository.findById(idTeam)
-                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, String.format(TEAM_NOT_FOUND,idTeam)));
+        Player playerOld = playerRepository.findById(idPlayer)
+                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST,String.format(PLAYER_NOT_FOUND,idPlayer)));
 
-        team.getPlayers().add(player);
-        player.setTeam(team);
+        if(!player.equals(playerOld) || idTeam != playerOld.getTeam().getId()){
 
-        playerRepository.save(player);
-        teamRepository.save(team);
+            Team team = teamRepository.findById(idTeam)
+                    .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, String.format(TEAM_NOT_FOUND,idTeam)));
+
+            team.getPlayers().add(player);
+            player.setTeam(team);
+
+            playerRepository.save(player);
+        }
     }
 
+    // no funciona delete, borra todoo el equipo junto con los jugadores
     public void deleteById(final Integer id){
 
         playerRepository.findById(id)
