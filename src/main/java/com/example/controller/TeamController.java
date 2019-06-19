@@ -3,6 +3,7 @@ package com.example.controller;
 
 import com.example.dto.TeamDTO;
 import com.example.model.Team;
+import com.example.model.projection.CantPlayersxTeam;
 import com.example.service.TeamService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,19 @@ public class TeamController {
         teamService.add(team);
     }
 
+
+    @PutMapping("/{id}")
+    public void update(@RequestBody final Team team, @PathVariable("id") final Integer id){
+
+        teamService.update(team,id);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteById(@PathVariable("id") final Integer id){
+
+        teamService.deleteById(id);
+    }
+
     @GetMapping("")
     public List<TeamDTO> getAll(){
 
@@ -47,20 +61,32 @@ public class TeamController {
 
     @GetMapping("/{id}")
     public TeamDTO getById(@PathVariable("id") final Integer id){
+
         return convertEntityToDTO(teamService.getById(id));
     }
 
-    @PutMapping("/{id}")
-    public void update(@RequestBody final Team team, @PathVariable("id") final Integer id){
-        teamService.update(team,id);
+    @GetMapping("/name/{name}")
+    public TeamDTO getByName(@PathVariable("name") final String name){
+
+        return teamService.getByName(name);
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteById(@PathVariable("id") final Integer id){
-        teamService.deleteById(id);
+    @GetMapping("/dinamico/name/{name}")
+    public TeamDTO getByNameDinamico(@PathVariable("name") String name){
+
+        return teamService.getByNameDinamico(name);
     }
+
+    @GetMapping("/playersXteam")
+    public List<CantPlayersxTeam> getCantPlayersxTeam(){
+
+        return teamService.getCantPlayersXteam();
+    }
+
+
 
     private TeamDTO convertEntityToDTO(Team team){
+
         return modelMapper.map(team, TeamDTO.class);
     }
 
@@ -76,5 +102,4 @@ public class TeamController {
         }
         return team;
     }
-
 }

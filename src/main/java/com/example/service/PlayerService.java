@@ -2,6 +2,7 @@ package com.example.service;
 
 import com.example.model.Player;
 import com.example.model.Team;
+import com.example.model.projection.IPlayerName;
 import com.example.repository.IPlayerRepository;
 import com.example.repository.ITeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,17 +35,6 @@ public class PlayerService {
         playerRepository.save(player);
     }
 
-    public List<Player> getAll(){
-
-        return playerRepository.findAll();
-    }
-
-    public Player getById(final Integer id){
-
-        return playerRepository.findById(id)
-                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, String.format(PLAYER_NOT_FOUND,id)));
-    }
-
     public void update(Player player, final Integer idPlayer, final Integer idTeam){
 
         Player playerOld = playerRepository.findById(idPlayer)
@@ -71,4 +61,37 @@ public class PlayerService {
         playerRepository.deleteById(id);
     }
 
+    public List<Player> getAll(){
+
+        return playerRepository.findAll();
+    }
+
+    public Player getById(final Integer id){
+
+        return playerRepository.findById(id)
+                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, String.format(PLAYER_NOT_FOUND,id)));
+    }
+
+    public List<Player> getByTeamId(final Integer teamId){
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST,String.format(TEAM_NOT_FOUND,teamId)));
+
+        return team.getPlayers();
+    }
+
+    public double getAverageAge(){
+        return playerRepository.getAverageAge();
+    }
+
+    public int getMaxAgeMinus(final String name){
+        return playerRepository.getMaxAgeMinus(name);
+    }
+
+    public List<Player> getByAge(final Integer age){
+        return playerRepository.getByAge(age);
+    }
+
+    public List<IPlayerName> getNamesByAge(final Integer age){
+        return playerRepository.getNamesByAge(age);
+    }
 }
