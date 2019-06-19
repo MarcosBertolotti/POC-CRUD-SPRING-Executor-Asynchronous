@@ -73,6 +73,7 @@ public class PlayerService {
     }
 
     public List<Player> getByTeamId(final Integer teamId){
+
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST,String.format(TEAM_NOT_FOUND,teamId)));
 
@@ -80,18 +81,22 @@ public class PlayerService {
     }
 
     public double getAverageAge(){
+
         return playerRepository.getAverageAge();
     }
 
     public int getMaxAgeMinus(final String name){
+
         return playerRepository.getMaxAgeMinus(name);
     }
 
     public List<Player> getByAge(final Integer age){
+
         return playerRepository.getByAge(age);
     }
 
     public List<IPlayerName> getNamesByAge(final Integer age){
+
         return playerRepository.getNamesByAge(age);
     }
 }
