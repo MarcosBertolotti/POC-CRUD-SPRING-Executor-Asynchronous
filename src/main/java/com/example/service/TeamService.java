@@ -3,6 +3,7 @@ package com.example.service;
 import com.example.dto.TeamDTO;
 import com.example.model.Team;
 import com.example.model.projection.CantPlayersxTeam;
+import com.example.model.projection.ITeamName;
 import com.example.repository.ICantPlayersxTeamRepository;
 import com.example.repository.ITeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,14 +57,14 @@ public class TeamService {
                 .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, String.format(TEAM_NOT_FOUND,id)));
     }
 
-    public TeamDTO getByName(final String name){
+    public ITeamName getByName(final String name){
 
         return teamRepository.findByName(name);
     }
 
-    public TeamDTO getByNameDinamico(String name){
+    public List<ITeamName> getByFoundationAge(final Integer age){
 
-        return teamRepository.findByName(name,TeamDTO.class);
+        return teamRepository.findByFoundationAge(age);
     }
 
     public List<CantPlayersxTeam> getCantPlayersXteam(){

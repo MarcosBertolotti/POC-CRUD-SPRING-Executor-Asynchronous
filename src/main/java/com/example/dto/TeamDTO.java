@@ -6,10 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
 
-import javax.persistence.CascadeType;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
@@ -23,6 +22,7 @@ import java.util.List;
 @EqualsAndHashCode
 public class TeamDTO {
 
+    @Id
     private Integer id;
 
     @NotEmpty(message = "team name cannot be null or empty")

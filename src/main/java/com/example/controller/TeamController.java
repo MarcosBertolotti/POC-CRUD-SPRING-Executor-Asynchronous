@@ -4,6 +4,7 @@ package com.example.controller;
 import com.example.dto.TeamDTO;
 import com.example.model.Team;
 import com.example.model.projection.CantPlayersxTeam;
+import com.example.model.projection.ITeamName;
 import com.example.service.TeamService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -66,15 +68,15 @@ public class TeamController {
     }
 
     @GetMapping("/name/{name}")
-    public TeamDTO getByName(@PathVariable("name") final String name){
+    public ITeamName getByName(@PathVariable("name") final String name){
 
         return teamService.getByName(name);
     }
 
-    @GetMapping("/dinamico/name/{name}")
-    public TeamDTO getByNameDinamico(@PathVariable("name") String name){
+    @GetMapping("/foundation/{date}")
+    public List<ITeamName> getByfoundationAge(@PathVariable("date") final Integer age){
 
-        return teamService.getByNameDinamico(name);
+        return teamService.getByFoundationAge(age);
     }
 
     @GetMapping("/playersXteam")
