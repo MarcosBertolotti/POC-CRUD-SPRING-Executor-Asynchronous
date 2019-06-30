@@ -8,15 +8,15 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-@Data
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-@Entity
-public class CantPlayersxTeam {
+@Data
+public class CantPlayersXTeam {
 
     @Id
     private String name;
-    private int cantidad;
 
+    private Integer cantidad;
 }

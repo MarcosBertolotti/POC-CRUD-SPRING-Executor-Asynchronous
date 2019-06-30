@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.exception.PlayerNotFoundException;
 import com.example.model.Player;
 import com.example.model.Team;
 import com.example.model.projection.IPlayerName;
@@ -12,53 +13,57 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
 
+import static java.util.Objects.isNull;
+
 @Service
 public class PlayerService {
 
-    private static final String PLAYER_NOT_FOUND = "Not Exists person with id: %s";
-    private static final String TEAM_NOT_FOUND = "Not Exists team with id: %s";
+    private static final String TEAM_NOT_FOUND = "no existe team con id: %s";
+    private static final String PLAYER_NOT_FOUND = "no existe player con id: %s";
+    private static final String PLAYER_NOT_FOUND_AGE = "no existe player con edad: %s";
+    private static final String PLAYER_NOT_FOUND_NAME = "no existe player con nombre: %s";
 
     @Autowired
-    IPlayerRepository playerRepository;
+    private IPlayerRepository playerRepository;
 
     @Autowired
-    ITeamRepository teamRepository;
+    private ITeamRepository teamRepository;
 
-    public void add(final Player player, final Integer idTeam){
+    public Player add(final Player player, final Integer teamId){
 
-        Team team = teamRepository.findById(idTeam)
-                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, String.format(TEAM_NOT_FOUND,idTeam)));
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, String.format(TEAM_NOT_FOUND,teamId)));
 
         team.getPlayers().add(player);
         player.setTeam(team);
 
-        playerRepository.save(player);
+        return playerRepository.save(player);
     }
 
-    public void update(Player player, final Integer idPlayer, final Integer idTeam){
+    public Player update(final Player player, final Integer id, final Integer idTeam) throws HttpClientErrorException{
 
-        Player playerOld = playerRepository.findById(idPlayer)
-                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST,String.format(PLAYER_NOT_FOUND,idPlayer)));
+        Player playerOld = playerRepository.findById(id)
+                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, String.format(PLAYER_NOT_FOUND,id)));
 
-        if(!player.equals(playerOld) || idTeam != playerOld.getTeam().getId()){
+        if(idTeam != playerOld.getTeam().getId()){
 
             Team team = teamRepository.findById(idTeam)
                     .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, String.format(TEAM_NOT_FOUND,idTeam)));
 
             team.getPlayers().add(player);
             player.setTeam(team);
-
-            playerRepository.save(player);
         }
+        return playerRepository.save(player);
     }
 
-    // no funciona delete, borra todoo el equipo junto con los jugadores
-    public void deleteById(final Integer id){
+    public Player deleteById(final Integer id) throws HttpClientErrorException{
 
-        playerRepository.findById(id)
-                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST,String.format(PLAYER_NOT_FOUND,id)));
+        Player player = playerRepository.findById(id)
+                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, String.format(PLAYER_NOT_FOUND,id)));
 
-        playerRepository.deleteById(id);
+        teamRepository.deleteById(id);
+
+        return player;
     }
 
     public List<Player> getAll(){
@@ -66,18 +71,10 @@ public class PlayerService {
         return playerRepository.findAll();
     }
 
-    public Player getById(final Integer id){
+    public Player getById(final Integer id) throws HttpClientErrorException{
 
         return playerRepository.findById(id)
-                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, String.format(PLAYER_NOT_FOUND,id)));
-    }
-
-    public List<Player> getByTeamId(final Integer teamId){
-
-        Team team = teamRepository.findById(teamId)
-                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST,String.format(TEAM_NOT_FOUND,teamId)));
-
-        return team.getPlayers();
+                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, String.format(PLAYER_NOT_FOUND,id)));
     }
 
     public double getAverageAge(){
@@ -85,18 +82,34 @@ public class PlayerService {
         return playerRepository.getAverageAge();
     }
 
-    public int getMaxAgeMinus(final String name){
+    public List<Player> getByAge(final Integer age) throws PlayerNotFoundException{
 
-        return playerRepository.getMaxAgeMinus(name);
+        List<Player> players =  playerRepository.getByAge(age);
+
+        if(isNull(players))
+            throw new PlayerNotFoundException(String.format(PLAYER_NOT_FOUND_AGE,age));
+
+        return players;
     }
 
-    public List<Player> getByAge(final Integer age){
+    public List<IPlayerName> getNamesByAge(final Integer age) throws PlayerNotFoundException{
 
-        return playerRepository.getByAge(age);
+        List<IPlayerName> players = playerRepository.getNamesByAge(age);
+
+        if(isNull(players))
+            throw new PlayerNotFoundException(String.format(PLAYER_NOT_FOUND_AGE,age));
+
+        return players;
     }
 
-    public List<IPlayerName> getNamesByAge(final Integer age){
+    public List<IPlayerName> getNamesByName(final String name) throws PlayerNotFoundException{
 
-        return playerRepository.getNamesByAge(age);
+        List<IPlayerName> players = playerRepository.getNamesByName(name);
+
+        if(isNull(players))
+            throw new PlayerNotFoundException(String.format(PLAYER_NOT_FOUND_NAME,name));
+
+        return players;
     }
+
 }

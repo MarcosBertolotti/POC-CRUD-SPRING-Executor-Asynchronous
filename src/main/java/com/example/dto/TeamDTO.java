@@ -1,14 +1,15 @@
 package com.example.dto;
 
-import com.example.model.Player;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Component;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
@@ -17,8 +18,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode
 public class TeamDTO {
 
@@ -31,7 +32,6 @@ public class TeamDTO {
 
     @NotNull(message = "Foundation date can not be null")
     @PastOrPresent(message = "Foundation date must be past or present date")
-    @JsonFormat(pattern="dd/MM/yyyy")
     private LocalDate foundationDate;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "team")

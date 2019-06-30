@@ -1,49 +1,58 @@
 package com.example.service;
 
-import com.example.dto.TeamDTO;
+import com.example.exception.TeamNotFoundException;
 import com.example.model.Team;
-import com.example.model.projection.CantPlayersxTeam;
+import com.example.model.projection.CantPlayersXTeam;
+import com.example.model.projection.IPlayerName;
 import com.example.model.projection.ITeamName;
-import com.example.repository.ICantPlayersxTeamRepository;
+import com.example.repository.ICantPlayersXTeamRepository;
 import com.example.repository.ITeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
+import static java.util.Objects.isNull;
 
 @Service
 public class TeamService {
 
-    private static final String TEAM_NOT_FOUND = "Not Exists team with id: %s";
+    private static final String TEAM_NOT_FOUND_ID = "no existe team con id: %s";
+    private static final String TEAM_NOT_FOUND_NAME = "no existe team con nombre: %s";
+    private static final String TEAM_NOT_FOUND_FOUNDATION = "no existe team con año de fundacion: %s";
 
     @Autowired
-    ITeamRepository teamRepository;
+    private ITeamRepository teamRepository;
 
     @Autowired
-    ICantPlayersxTeamRepository cantPlayersxTeamRepository;
+    private ICantPlayersXTeamRepository cantPlayersXTeam;
 
-    public void add(final Team team){
+    public Team add(final Team team){
 
-        teamRepository.save(team);
+        return teamRepository.save(team);
     }
 
-    public void update(final Team team, final Integer id){
-
-        Team teamOld = teamRepository.findById(id).
-                orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, String.format(TEAM_NOT_FOUND,id)));
-
-        if(!teamOld.equals(team))
-            teamRepository.save(team);
-    }
-
-    public void deleteById(final Integer id){
+    public Team update(final Team team, final Integer id) throws HttpClientErrorException{
 
         teamRepository.findById(id)
-                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, String.format(TEAM_NOT_FOUND,id)));
+                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, String.format(TEAM_NOT_FOUND_ID,id)));
+
+        return teamRepository.save(team);
+    }
+
+    public Team deleteById(final Integer id) throws HttpClientErrorException{
+
+        Team team = teamRepository.findById(id)
+                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, String.format(TEAM_NOT_FOUND_ID,id)));
 
         teamRepository.deleteById(id);
+
+        return team;
     }
 
     public List<Team> getAll(){
@@ -51,24 +60,35 @@ public class TeamService {
         return teamRepository.findAll();
     }
 
-    public Team getById(final Integer id){
+    public Team getById(final Integer id) throws HttpClientErrorException{
 
         return teamRepository.findById(id)
-                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, String.format(TEAM_NOT_FOUND,id)));
+                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, String.format(TEAM_NOT_FOUND_ID,id)));
     }
 
-    public ITeamName getByName(final String name){
+    public List<ITeamName> getByFoundationDate(final Integer foundation) throws TeamNotFoundException{
 
-        return teamRepository.findByName(name);
+        List<ITeamName> teams = teamRepository.findByFoundationDate(foundation);
+
+        if(isNull(teams))
+            throw new TeamNotFoundException(String.format(TEAM_NOT_FOUND_FOUNDATION,foundation));
+
+        return teams;
     }
 
-    public List<ITeamName> getByFoundationAge(final Integer age){
+    public ITeamName getByName(final String name) throws TeamNotFoundException{
 
-        return teamRepository.findByFoundationAge(age);
+        ITeamName team = teamRepository.findByName(name);
+
+        if(isNull(team))
+            throw new TeamNotFoundException(String.format(TEAM_NOT_FOUND_NAME,name));
+
+        return team;
     }
 
-    public List<CantPlayersxTeam> getCantPlayersXteam(){
+    public List<CantPlayersXTeam> getCantPlayersXTeam(){
 
-        return cantPlayersxTeamRepository.getCantPlayersxTeam();
+        return cantPlayersXTeam.getCantPlayersXTeam();
     }
+
 }
