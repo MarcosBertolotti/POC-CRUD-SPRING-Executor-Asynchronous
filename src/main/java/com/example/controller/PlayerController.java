@@ -51,7 +51,7 @@ public class PlayerController {
         try {
             Player p = playerService.update(player, id, idTeam);
 
-            return ResponseEntity.accepted().body(p);
+            return ResponseEntity.created(URI.create("http://localhost:8080/teams/" + p.getId())).body(p);
 
         }catch (HttpClientErrorException e){
             return ResponseEntity.status(e.getStatusCode()).body(e.getLocalizedMessage());
