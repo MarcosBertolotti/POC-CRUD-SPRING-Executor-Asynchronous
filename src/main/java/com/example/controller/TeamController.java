@@ -52,7 +52,7 @@ public class TeamController {
         try {
             Team t = teamService.update(team, id);
 
-            return ResponseEntity.accepted().body(t);
+            return ResponseEntity.created(URI.create("http://localhost:8080/teams/" + t.getId())).body(t);
 
         }catch (HttpClientErrorException e){
             return ResponseEntity.status(e.getStatusCode()).body(e.getLocalizedMessage());
