@@ -89,7 +89,7 @@ public class TeamController {
                 return ResponseEntity.ok(teamsDto);
             }
             else
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -118,7 +118,7 @@ public class TeamController {
             if(teams.size() > 0)
                 return ResponseEntity.ok(teams);
             else
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 
         }catch (HttpClientErrorException e){
             return ResponseEntity.status(e.getStatusCode()).body(e.getLocalizedMessage());
@@ -149,7 +149,7 @@ public class TeamController {
             if(teams.size() > 0)
                 return ResponseEntity.ok(teams);
             else
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
